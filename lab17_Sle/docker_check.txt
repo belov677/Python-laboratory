@@ -1,0 +1,13 @@
+$ docker compose build
+ Image lab17_sle-bot Built
+$ docker compose up -d redis
+ Container lab17_sle-redis-1 Started
+$ docker compose ps
+SERVICE   IMAGE     STATUS         PORTS
+redis     redis:7   Up 6 seconds   6379/tcp
+$ docker compose run --rm -T -e DATABASE_URL=sqlite+aiosqlite:////data/check.db bot python -c "import asyncio; from bot.main import build_dispatcher; from bot.config import get_settings; dp = asyncio.run(build_dispatcher(get_settings(), reset=True)); print('Dispatcher собран, FSM-хранилище:', type(dp.storage).__name__)" 2>&1 | tail -1
+Dispatcher собран, FSM-хранилище: RedisStorage
+$ docker compose run --rm -T -e BOT_TOKEN= bot 2>&1 | grep BOT_TOKEN
+Не задана переменная окружения BOT_TOKEN (см. .env.example)
+$ docker compose down -v
+ Network lab17_sle_default Removed

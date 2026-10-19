@@ -1,0 +1,17 @@
+digraph ER {
+  rankdir=LR; node [shape=plaintext, fontname="DejaVu Sans", fontsize=11]; edge [fontname="DejaVu Sans", fontsize=10];
+  u [label=<<table border="0" cellborder="1" cellspacing="0"><tr><td bgcolor="#dbe8f5"><b>users</b></td></tr>
+   <tr><td align="left">id PK</td></tr><tr><td align="left">telegram_id UNIQUE</td></tr><tr><td align="left">full_name, username</td></tr><tr><td align="left">messages, created_at</td></tr></table>>];
+  s [label=<<table border="0" cellborder="1" cellspacing="0"><tr><td bgcolor="#dbe8f5"><b>suppliers</b></td></tr>
+   <tr><td align="left">id PK</td></tr><tr><td align="left">name UNIQUE</td></tr><tr><td align="left">phone</td></tr></table>>];
+  p [label=<<table border="0" cellborder="1" cellspacing="0"><tr><td bgcolor="#dbe8f5"><b>products</b></td></tr>
+   <tr><td align="left">id PK</td></tr><tr><td align="left">sku UNIQUE</td></tr><tr><td align="left">name, price &gt; 0</td></tr><tr><td align="left">min_stock</td></tr><tr><td align="left">supplier_id FK</td></tr></table>>];
+  w [label=<<table border="0" cellborder="1" cellspacing="0"><tr><td bgcolor="#dbe8f5"><b>warehouses</b></td></tr>
+   <tr><td align="left">id PK</td></tr><tr><td align="left">name UNIQUE</td></tr><tr><td align="left">city</td></tr></table>>];
+  st [label=<<table border="0" cellborder="1" cellspacing="0"><tr><td bgcolor="#dbe8f5"><b>stocks</b></td></tr>
+   <tr><td align="left">id PK</td></tr><tr><td align="left">product_id FK</td></tr><tr><td align="left">warehouse_id FK</td></tr><tr><td align="left">quantity ≥ 0</td></tr><tr><td align="left">UNIQUE(product, warehouse)</td></tr></table>>];
+  o [label=<<table border="0" cellborder="1" cellspacing="0"><tr><td bgcolor="#dbe8f5"><b>operations</b></td></tr>
+   <tr><td align="left">id PK</td></tr><tr><td align="left">kind (receipt/writeoff)</td></tr><tr><td align="left">product_id, warehouse_id FK</td></tr><tr><td align="left">quantity, user_id, created_at</td></tr></table>>];
+  s -> p [label="1:N", arrowhead=crow]; p -> st [label="1:N", arrowhead=crow]; w -> st [label="1:N", arrowhead=crow];
+  p -> o [label="1:N", arrowhead=crow]; w -> o [label="1:N", arrowhead=crow]; u -> o [label="1:N (user_id)", arrowhead=crow, style=dashed];
+}
