@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}Отслеживание{% endblock %}
+{% block content %}
+<h1>Отследить отправление</h1>
+<form class="track-form">
+  <input name="number" value="{{ number }}" placeholder="Трек-номер">
+  <button>Найти</button>
+</form>
+{% endblock %}

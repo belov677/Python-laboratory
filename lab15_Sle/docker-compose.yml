@@ -1,0 +1,23 @@
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: lab
+      POSTGRES_PASSWORD: lab
+      POSTGRES_DB: logistics_web
+    volumes: [pgdata:/var/lib/postgresql/data]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U lab"]
+      interval: 5s
+      retries: 10
+  web:
+    build: .
+    env_file: .env.example
+    environment:
+      DATABASE_URL: postgresql+psycopg://lab:lab@db:5432/logistics_web
+      RESET_DB: "1"
+    ports: ["5015:5015"]
+    depends_on:
+      db: {condition: service_healthy}
+volumes:
+  pgdata:

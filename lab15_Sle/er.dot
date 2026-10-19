@@ -1,0 +1,19 @@
+digraph ER {
+  rankdir=LR; node [shape=plaintext, fontname="DejaVu Sans", fontsize=11];
+  clients [label=<<table border="0" cellborder="1" cellspacing="0"><tr><td bgcolor="#dce6f2"><b>clients</b></td></tr>
+    <tr><td align="left">PK id</td></tr><tr><td align="left">name</td></tr><tr><td align="left">email UNIQUE</td></tr>
+    <tr><td align="left">phone NULL</td></tr><tr><td align="left">city</td></tr></table>>];
+  shipments [label=<<table border="0" cellborder="1" cellspacing="0"><tr><td bgcolor="#dce6f2"><b>shipments</b></td></tr>
+    <tr><td align="left">PK id</td></tr><tr><td align="left">tracking_number UNIQUE</td></tr><tr><td align="left">FK client_id</td></tr>
+    <tr><td align="left">origin, destination</td></tr><tr><td align="left">distance_km CHECK &gt; 0</td></tr>
+    <tr><td align="left">status ENUM</td></tr><tr><td align="left">cost CHECK &gt;= 0</td></tr><tr><td align="left">created_at</td></tr></table>>];
+  cargos [label=<<table border="0" cellborder="1" cellspacing="0"><tr><td bgcolor="#dce6f2"><b>cargos</b></td></tr>
+    <tr><td align="left">PK id</td></tr><tr><td align="left">FK shipment_id</td></tr><tr><td align="left">description</td></tr>
+    <tr><td align="left">cargo_type</td></tr><tr><td align="left">weight_kg CHECK &gt; 0</td></tr></table>>];
+  events [label=<<table border="0" cellborder="1" cellspacing="0"><tr><td bgcolor="#dce6f2"><b>tracking_events</b></td></tr>
+    <tr><td align="left">PK id</td></tr><tr><td align="left">FK shipment_id</td></tr><tr><td align="left">status ENUM</td></tr>
+    <tr><td align="left">location</td></tr><tr><td align="left">created_at</td></tr></table>>];
+  clients -> shipments [label="1 : N", arrowhead=crow];
+  shipments -> cargos [label="1 : N", arrowhead=crow];
+  shipments -> events [label="1 : N", arrowhead=crow];
+}

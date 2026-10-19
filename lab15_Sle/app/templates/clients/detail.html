@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% from "_status.html" import badge %}
+{% block title %}{{ c.name }}{% endblock %}
+{% block content %}
+<h1>{{ c.name }}</h1>
+<p>{{ c.email }} · {{ c.phone or 'телефон не указан' }} · {{ c.city }}</p>
+<h2>Отправления клиента</h2>
+<table>
+  <tr><th>Трек-номер</th><th>Маршрут</th><th>Стоимость</th><th>Статус</th></tr>
+  {% for s in c.shipments %}
+  <tr><td><a href="{{ url_for('web.shipment_detail', shipment_id=s.id) }}">{{ s.tracking_number }}</a></td>
+      <td>{{ s.origin }} → {{ s.destination }}</td><td>{{ "%.2f"|format(s.cost) }}</td><td>{{ badge(s.status) }}</td></tr>
+  {% else %}<tr><td colspan="4">Отправлений пока нет</td></tr>{% endfor %}
+</table>
+<p><a class="btn" href="{{ url_for('web.shipment_create', client_id=c.id) }}">+ Оформить отправление</a></p>
+{% endblock %}

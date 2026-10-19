@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% from "_status.html" import badge %}
+{% block title %}Главная{% endblock %}
+{% block content %}
+<section class="hero">
+  <h1>Создание и отслеживание отправлений</h1>
+  <p>Оформляйте перевозку грузов клиентов и следите за статусом по трек-номеру.</p>
+  <form class="track-form" action="{{ url_for('web.track') }}">
+    <input name="number" placeholder="Трек-номер, например LG-00001">
+    <button>Отследить</button>
+  </form>
+</section>
+<div class="cards">
+  <div class="card"><b>{{ total }}</b><span>всего отправлений</span></div>
+  <div class="card"><b>{{ stats.clients }}</b><span>клиентов</span></div>
+  {% for title, n in stats.by_status.items() %}
+  <div class="card"><b>{{ n }}</b><span>{{ title }}</span></div>
+  {% endfor %}
+</div>
+<h2>Последние отправления</h2>
+<table>
+  <tr><th>Трек-номер</th><th>Клиент</th><th>Маршрут</th><th>Статус</th></tr>
+  {% for s in latest %}
+  <tr><td><a href="{{ url_for('web.shipment_detail', shipment_id=s.id) }}">{{ s.tracking_number }}</a></td>
+      <td>{{ s.client.name }}</td><td>{{ s.origin }} → {{ s.destination }}</td><td>{{ badge(s.status) }}</td></tr>
+  {% endfor %}
+</table>
+<p><a class="btn" href="{{ url_for('web.shipment_create') }}">+ Новое отправление</a></p>
+{% endblock %}

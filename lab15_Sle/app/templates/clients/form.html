@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}Новый клиент{% endblock %}
+{% block content %}
+<h1>Новый клиент</h1>
+<form method="post" class="form" novalidate>
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  {% for name, title in [('name', 'Имя / организация'), ('email', 'Email'), ('phone', 'Телефон'), ('city', 'Город')] %}
+  <label>{{ title }}<input name="{{ name }}" value="{{ data.get(name, '') }}">
+    {% if errors[name] %}<span class="err">{{ errors[name] }}</span>{% endif %}</label>
+  {% endfor %}
+  <button>Сохранить</button>
+</form>
+{% endblock %}

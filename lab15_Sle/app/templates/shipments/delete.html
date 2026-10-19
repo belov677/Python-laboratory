@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Удаление{% endblock %}
+{% block content %}
+<h1>Удалить отправление {{ s.tracking_number }}?</h1>
+<div class="panel">
+  <p>{{ s.client.name }}: {{ s.origin }} → {{ s.destination }}, грузов: {{ s.cargos|length }}, статус «{{ s.status.value }}».</p>
+  <p>Будут удалены также грузы и история отслеживания. Действие необратимо.</p>
+  <form method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <button class="btn danger">Да, удалить</button>
+    <a href="{{ url_for('web.shipment_detail', shipment_id=s.id) }}">Отмена</a>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}{{ title }}{% endblock %}
+{% block content %}
+<h1>{{ title }}</h1>
+{% if errors %}<div class="flash error">Исправьте ошибки в форме ({{ errors|length }}).</div>{% endif %}
+<form method="post" class="form" novalidate>
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <label>Клиент
+    <select name="client_id">
+      <option value="">— выберите клиента —</option>
+      {% for c in clients %}<option value="{{ c.id }}" {% if data.client_id|string == c.id|string %}selected{% endif %}>{{ c.name }} ({{ c.city }})</option>{% endfor %}
+    </select>
+    {% if errors.client_id %}<span class="err">{{ errors.client_id }}</span>{% endif %}
+  </label>
+  <div class="row">
+    <label>Откуда<input name="origin" value="{{ data.origin or '' }}">
+      {% if errors.origin %}<span class="err">{{ errors.origin }}</span>{% endif %}</label>
+    <label>Куда<input name="destination" value="{{ data.destination or '' }}">
+      {% if errors.destination %}<span class="err">{{ errors.destination }}</span>{% endif %}</label>
+    <label>Расстояние, км<input name="distance_km" value="{{ data.distance_km or '' }}">
+      {% if errors.distance_km %}<span class="err">{{ errors.distance_km }}</span>{% endif %}</label>
+  </div>
+  <fieldset>
+    <legend>Грузы (пустые строки игнорируются)</legend>
+    {% for c in data.cargos %}
+    <div class="row">
+      <input name="cargo_description" placeholder="Описание груза" value="{{ c.description }}">
+      <input name="cargo_weight" placeholder="Вес, кг" value="{{ c.weight_kg }}">
+      <select name="cargo_type">
+        {% for t in cargo_types %}<option {% if c.cargo_type == t %}selected{% endif %}>{{ t }}</option>{% endfor %}
+      </select>
+    </div>
+    {% if errors['cargo%d'|format(loop.index)] %}<span class="err">{{ errors['cargo%d'|format(loop.index)] }}</span>{% endif %}
+    {% endfor %}
+    {% if errors.cargos %}<span class="err">{{ errors.cargos }}</span>{% endif %}
+  </fieldset>
+  <p class="hint">Стоимость = 500 руб. + вес × км × 0,02 (хрупкий ×1,3, опасный ×1,5)</p>
+  <button>Сохранить</button>
+  <a href="{{ url_for('web.shipment_list') }}">Отмена</a>
+</form>
+{% endblock %}

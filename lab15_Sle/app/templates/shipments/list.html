@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% from "_status.html" import badge %}
+{% block title %}Отправления{% endblock %}
+{% block content %}
+<h1>Отправления <small>(найдено: {{ total }})</small></h1>
+<form class="filters" method="get">
+  <input name="q" value="{{ args.get('q', '') }}" placeholder="Поиск: трек-номер или город">
+  <select name="status">
+    <option value="">Любой статус</option>
+    {% for st in statuses %}<option value="{{ st.name }}" {% if args.get('status') == st.name %}selected{% endif %}>{{ st.value }}</option>{% endfor %}
+  </select>
+  <select name="client_id">
+    <option value="">Все клиенты</option>
+    {% for c in clients %}<option value="{{ c.id }}" {% if args.get('client_id') == c.id|string %}selected{% endif %}>{{ c.name }}</option>{% endfor %}
+  </select>
+  <select name="sort">
+    {% for key, title in [('created', 'по дате'), ('cost', 'по стоимости'), ('distance', 'по расстоянию')] %}
+    <option value="{{ key }}" {% if args.get('sort', 'created') == key %}selected{% endif %}>{{ title }}</option>{% endfor %}
+  </select>
+  <select name="order">
+    <option value="desc" {% if args.get('order') != 'asc' %}selected{% endif %}>↓ убыв.</option>
+    <option value="asc" {% if args.get('order') == 'asc' %}selected{% endif %}>↑ возр.</option>
+  </select>
+  <button>Применить</button>
+  <a href="{{ url_for('web.shipment_list') }}">Сбросить</a>
+</form>
+{% if items %}
+<table>
+  <tr><th>Трек-номер</th><th>Клиент</th><th>Маршрут</th><th>Км</th><th>Вес, кг</th><th>Стоимость</th><th>Статус</th><th>Создано</th><th></th></tr>
+  {% for s in items %}
+  <tr>
+    <td><a href="{{ url_for('web.shipment_detail', shipment_id=s.id) }}">{{ s.tracking_number }}</a></td>
+    <td><a href="{{ url_for('web.client_detail', client_id=s.client.id) }}">{{ s.client.name }}</a></td>
+    <td>{{ s.origin }} → {{ s.destination }}</td><td>{{ s.distance_km }}</td>
+    <td>{{ s.weight }}</td><td>{{ "%.2f"|format(s.cost) }}</td><td>{{ badge(s.status) }}</td>
+    <td>{{ s.created_at.strftime('%d.%m.%Y %H:%M') }}</td>
+    <td class="actions"><a href="{{ url_for('web.shipment_edit', shipment_id=s.id) }}">✎</a>
+        <a href="{{ url_for('web.shipment_delete', shipment_id=s.id) }}">🗑</a></td>
+  </tr>
+  {% endfor %}
+</table>
+{% else %}
+<p class="empty">Ничего не найдено. Измените условия поиска.</p>
+{% endif %}
+{% if pages > 1 %}
+<div class="pagination">
+  {% for p in range(1, pages + 1) %}
+    {% set query = args.to_dict() %}{% set _ = query.update({'page': p}) %}
+    <a class="{{ 'current' if p == page }}" href="{{ url_for('web.shipment_list', **query) }}">{{ p }}</a>
+  {% endfor %}
+</div>
+{% endif %}
+{% endblock %}

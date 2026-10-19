@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}Клиенты{% endblock %}
+{% block content %}
+<h1>Клиенты</h1>
+<p><a class="btn" href="{{ url_for('web.client_create') }}">+ Добавить клиента</a></p>
+<table>
+  <tr><th>Имя</th><th>Email</th><th>Телефон</th><th>Город</th><th>Отправлений</th></tr>
+  {% for c in clients %}
+  <tr><td><a href="{{ url_for('web.client_detail', client_id=c.id) }}">{{ c.name }}</a></td>
+      <td>{{ c.email }}</td><td>{{ c.phone or '—' }}</td><td>{{ c.city }}</td><td>{{ c.shipments|length }}</td></tr>
+  {% endfor %}
+</table>
+{% endblock %}

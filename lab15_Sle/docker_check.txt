@@ -1,0 +1,20 @@
+$ docker compose build
+ Image lab15_sle-web Built
+$ docker compose up -d --wait
+ Container lab15_sle-db-1 Started 
+ Container lab15_sle-db-1 Healthy 
+ Container lab15_sle-web-1 Started 
+ Container lab15_sle-web-1 Healthy 
+ Container lab15_sle-db-1 Healthy
+$ docker compose ps
+SERVICE   IMAGE           STATUS                    PORTS
+db        postgres:16     Up 12 seconds (healthy)   5432/tcp
+web       lab15_sle-web   Up 6 seconds              0.0.0.0:5015->5015/tcp
+$ curl -s localhost:5015/health; echo
+{"status":"ok"}
+$ curl -s 'localhost:5015/api/shipments?status=IN_TRANSIT&size=1' | python3 -c 'import json,sys; d=json.load(sys.stdin); print("total:", d["total"], d["items"][0]["tracking_number"])'
+total: 2 LG-00007
+$ curl -s -o /dev/null -w 'GET / (HTML) → %{http_code}\n' localhost:5015/
+GET / (HTML) → 200
+$ docker compose down -v
+ Network lab15_sle_default Removed 

@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% from "_status.html" import badge %}
+{% block title %}{{ s.tracking_number }}{% endblock %}
+{% block content %}
+<h1>Отправление {{ s.tracking_number }} {{ badge(s.status) }}</h1>
+<div class="grid2">
+  <div class="panel">
+    <h3>Сведения</h3>
+    <dl>
+      <dt>Клиент</dt><dd><a href="{{ url_for('web.client_detail', client_id=s.client.id) }}">{{ s.client.name }}</a> ({{ s.client.email }})</dd>
+      <dt>Маршрут</dt><dd>{{ s.origin }} → {{ s.destination }}, {{ s.distance_km }} км</dd>
+      <dt>Общий вес</dt><dd>{{ s.weight }} кг</dd>
+      <dt>Стоимость</dt><dd>{{ "%.2f"|format(s.cost) }} руб.</dd>
+      <dt>Создано</dt><dd>{{ s.created_at.strftime('%d.%m.%Y %H:%M') }}</dd>
+    </dl>
+    <h3>Грузы</h3>
+    <table><tr><th>Описание</th><th>Тип</th><th>Вес, кг</th></tr>
+      {% for c in s.cargos %}<tr><td>{{ c.description }}</td><td>{{ c.cargo_type }}</td><td>{{ c.weight_kg }}</td></tr>{% endfor %}
+    </table>
+    <p>
+      <a class="btn" href="{{ url_for('web.shipment_edit', shipment_id=s.id) }}">Редактировать</a>
+      <a class="btn danger" href="{{ url_for('web.shipment_delete', shipment_id=s.id) }}">Удалить</a>
+    </p>
+  </div>
+  <div class="panel">
+    <h3>История отслеживания</h3>
+    <ol class="timeline">
+      {% for e in s.events %}
+      <li><b>{{ e.status.value }}</b> — {{ e.location }}<br><small>{{ e.created_at.strftime('%d.%m.%Y %H:%M:%S') }}</small></li>
+      {% endfor %}
+    </ol>
+    {% if s.status.name in ('CREATED', 'IN_TRANSIT') %}
+    <h3>Изменить статус</h3>
+    <form method="post" action="{{ url_for('web.shipment_status', shipment_id=s.id) }}" class="inline">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <select name="status">
+        {% for st in statuses if st.name != 'CREATED' %}<option value="{{ st.name }}">{{ st.value }}</option>{% endfor %}
+      </select>
+      <input name="location" placeholder="Местоположение" required>
+      <button>Сохранить</button>
+    </form>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
