@@ -1,0 +1,26 @@
+$ docker compose build
+ Image lab13_sle-app Built
+$ docker compose up -d mongodb redis
+ Container lab13_sle-redis-1 Started 
+ Container lab13_sle-mongodb-1 Started
+$ docker compose ps
+SERVICE   IMAGE     STATUS         PORTS
+mongodb   mongo:8   Up 6 seconds   27017/tcp
+redis     redis:7   Up 6 seconds   6379/tcp
+$ printf '7\n0\n' | docker compose run --rm -T app 2>&1 | grep -vE 'Container|^ [0-9]|^=====' | head -14
+Созданы индексы: ux_sku, ix_category_price, ix_supplier_city, ix_batch_expiry
+MongoDB: warehouse.warehouse_item, документов: 24; Redis: доступен
+
+Выберите пункт:   Всего товаров: 24
+  По категориям:
+    электроника    позиций  6, единиц  115, стоимость  904,050.00, средняя цена  14223.33
+    мебель         позиций  4, единиц   14, стоимость  136,230.00, средняя цена  10947.50
+    канцелярия     позиций  5, единиц  138, стоимость   42,885.00, средняя цена    239.00
+    продукты       позиций  5, единиц  176, стоимость   30,368.00, средняя цена    236.60
+    бытовая химия  позиций  4, единиц  101, стоимость   22,715.00, средняя цена    303.75
+  По поставщикам:
+    Молкомбинат     Тверь            позиций 5, ниже минимума 2
+    ТД Канцлер      Санкт-Петербург  позиций 5, ниже минимума 2
+    ИП Чистов       Самара           позиций 4, ниже минимума 1
+$ docker compose down -v
+ Network lab13_sle_default Removed
