@@ -1,0 +1,22 @@
+2026-10-15 21:21:12,296 INFO music.storage: Файл data/library.json не найден — начинаем с пустого каталога
+2026-10-15 21:21:12,297 INFO music.service: Добавлена композиция [  1] Queen — Bohemian Rhapsody (rock, 5:55)
+2026-10-15 21:21:12,297 INFO music.service: Добавлена композиция [  2] Nirvana — Smells Like Teen Spirit (grunge, 5:01)
+2026-10-15 21:21:12,297 INFO music.service: Добавлена композиция [  3] Miles Davis — So What (jazz, 9:22)
+2026-10-15 21:21:12,297 INFO music.service: Добавлена композиция [  4] John Lennon — Imagine (rock, 3:03)
+2026-10-15 21:21:12,297 INFO music.service: Добавлена композиция [  5] Кино — Группа крови (rock, 4:46)
+2026-10-15 21:21:12,298 INFO music.storage: Сохранено 5 композиций в data/library.json
+2026-10-15 21:21:12,366 INFO music.storage: Загружено 5 композиций из data/library.json
+2026-10-15 21:21:12,367 INFO music.service: Создан плейлист Для пробежки (3 композиций)
+2026-10-15 21:21:12,367 INFO music.service: Изменена композиция [  4] John Lennon — Imagine (pop, 3:10)
+2026-10-15 21:21:12,367 INFO music.storage: Экспортировано 5 строк в data/library.csv
+2026-10-15 21:21:12,367 INFO music.service: Добавлена композиция [  6] The Beatles — Yesterday (rock, 2:05)
+2026-10-15 21:21:12,368 INFO music.service: Добавлена композиция [  7] Dave Brubeck — Take Five (jazz, 5:24)
+2026-10-15 21:21:12,368 INFO music.storage: Сохранено 7 композиций в data/library.json
+2026-10-15 21:21:12,429 INFO music.storage: Загружено 7 композиций из data/library.json
+2026-10-15 21:21:12,431 INFO music.storage: Сохранено 7 композиций в data/library.json
+2026-10-15 21:21:12,505 INFO music.storage: Загружено 7 композиций из data/library.bak.json
+2026-10-15 21:21:12,506 INFO music.storage: Сохранено 7 композиций в data/library.json
+2026-10-15 21:21:12,506 INFO music.storage: Загружено 7 композиций из data/library.json
+2026-10-15 21:21:12,507 INFO music.storage: Сохранено 7 композиций в data/library.json
+2026-10-15 21:21:12,569 INFO music.storage: Загружено 7 композиций из data/library.json
+2026-10-15 21:21:12,571 INFO music.storage: Сохранено 7 композиций в data/library.json

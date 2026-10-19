@@ -1,0 +1,63 @@
+{
+    "tracks": [
+        {
+            "id": 1,
+            "title": "Bohemian Rhapsody",
+            "artist": "Queen",
+            "genre": "rock",
+            "duration": 355
+        },
+        {
+            "id": 2,
+            "title": "Smells Like Teen Spirit",
+            "artist": "Nirvana",
+            "genre": "grunge",
+            "duration": 301
+        },
+        {
+            "id": 3,
+            "title": "So What",
+            "artist": "Miles Davis",
+            "genre": "jazz",
+            "duration": 562
+        },
+        {
+            "id": 4,
+            "title": "Imagine",
+            "artist": "John Lennon",
+            "genre": "pop",
+            "duration": 190
+        },
+        {
+            "id": 5,
+            "title": "Группа крови",
+            "artist": "Кино",
+            "genre": "rock",
+            "duration": 286
+        },
+        {
+            "id": 6,
+            "title": "Yesterday",
+            "artist": "The Beatles",
+            "genre": "rock",
+            "duration": 125
+        },
+        {
+            "id": 7,
+            "title": "Take Five",
+            "artist": "Dave Brubeck",
+            "genre": "jazz",
+            "duration": 324
+        }
+    ],
+    "playlists": [
+        {
+            "name": "Для пробежки",
+            "track_ids": [
+                1,
+                2,
+                4
+            ]
+        }
+    ]
+}
