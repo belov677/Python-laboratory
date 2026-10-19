@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}Новая поставка{% endblock %}
+{% block content %}
+<h1>Оформление поставки</h1>
+<form method="post" class="form panel" novalidate>{% csrf_token %}
+  {% if form.non_field_errors %}<div class="flash error">{{ form.non_field_errors }}</div>{% endif %}
+  {% for field in form %}<label>{{ field.label }} {{ field }}{% for e in field.errors %}<span class="err">{{ e }}</span>{% endfor %}</label>{% endfor %}
+  <div><button>Оформить</button> <a href="{% url 'shipment_list' %}">Отмена</a></div>
+</form>
+{% endblock %}

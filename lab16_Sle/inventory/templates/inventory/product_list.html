@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Товары{% endblock %}
+{% block content %}
+<div class="head">
+  <h1>Товары <small>найдено: {{ total }}</small></h1>
+  {% if perms.inventory.add_product %}<a class="btn" href="{% url 'product_create' %}">+ Добавить товар</a>{% endif %}
+</div>
+<form class="filters" method="get">
+  {{ form.q }} {{ form.category }} {{ form.supplier }} {{ form.sort }}
+  <label class="check">{{ form.critical }} только критические</label>
+  <button>Применить</button> <a href="{% url 'product_list' %}">Сбросить</a>
+</form>
+{% if page.object_list %}
+<table>
+  <tr><th>Артикул</th><th>Наименование</th><th>Категория</th><th>Цена</th><th>Остаток</th><th>Мин.</th><th>Действия</th></tr>
+  {% for p in page %}
+  <tr class="{% if p.total < p.min_stock %}low{% endif %}">
+    <td>{{ p.sku }}</td>
+    <td><a href="{% url 'product_detail' p.pk %}">{{ p.name }}</a></td>
+    <td>{{ p.get_category_display }}</td>
+    <td class="num">{{ p.price }}</td>
+    <td class="num">{{ p.total }} {{ p.unit }}{% if p.total < p.min_stock %} ⚠{% endif %}</td>
+    <td class="num">{{ p.min_stock }}</td>
+    <td class="actions">
+      <a href="{% url 'product_detail' p.pk %}">открыть</a>
+      {% if perms.inventory.change_product %}<a href="{% url 'product_edit' p.pk %}">изменить</a>{% endif %}
+      {% if perms.inventory.delete_product %}<a class="danger" href="{% url 'product_delete' p.pk %}">удалить</a>{% endif %}
+    </td>
+  </tr>
+  {% endfor %}
+</table>
+{% include "_pagination.html" %}
+{% else %}
+<p class="empty">Товары не найдены.</p>
+{% endif %}
+{% endblock %}

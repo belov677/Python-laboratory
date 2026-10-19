@@ -1,0 +1,23 @@
+digraph ER {
+  rankdir=LR; node [shape=plaintext, fontname="DejaVu Sans", fontsize=11];
+  edge [fontname="DejaVu Sans", fontsize=10];
+  t [label=<<table border="0" cellborder="1" cellspacing="0"><tr><td bgcolor="#d5ebe1"><b>Supplier</b></td></tr>
+    <tr><td align="left">id PK</td></tr><tr><td align="left">name</td></tr><tr><td align="left">inn UNIQUE</td></tr>
+    <tr><td align="left">email, phone, city</td></tr></table>>];
+  p [label=<<table border="0" cellborder="1" cellspacing="0"><tr><td bgcolor="#d5ebe1"><b>Product</b></td></tr>
+    <tr><td align="left">id PK</td></tr><tr><td align="left">sku UNIQUE</td></tr><tr><td align="left">name, category, unit</td></tr>
+    <tr><td align="left">price, min_stock</td></tr><tr><td align="left">description, created_at</td></tr></table>>];
+  m [label=<<table border="0" cellborder="1" cellspacing="0"><tr><td bgcolor="#eeeeee"><b>product_suppliers</b></td></tr>
+    <tr><td align="left">product_id FK</td></tr><tr><td align="left">supplier_id FK</td></tr></table>>];
+  w [label=<<table border="0" cellborder="1" cellspacing="0"><tr><td bgcolor="#d5ebe1"><b>Warehouse</b></td></tr>
+    <tr><td align="left">id PK</td></tr><tr><td align="left">name UNIQUE</td></tr><tr><td align="left">city, address</td></tr></table>>];
+  s [label=<<table border="0" cellborder="1" cellspacing="0"><tr><td bgcolor="#d5ebe1"><b>StockItem</b></td></tr>
+    <tr><td align="left">id PK</td></tr><tr><td align="left">product_id FK</td></tr><tr><td align="left">warehouse_id FK</td></tr>
+    <tr><td align="left">quantity ≥ 0</td></tr><tr><td align="left">UNIQUE(product, warehouse)</td></tr></table>>];
+  h [label=<<table border="0" cellborder="1" cellspacing="0"><tr><td bgcolor="#d5ebe1"><b>Shipment</b></td></tr>
+    <tr><td align="left">id PK</td></tr><tr><td align="left">product_id, supplier_id, warehouse_id FK</td></tr>
+    <tr><td align="left">quantity, purchase_price</td></tr><tr><td align="left">status, expected_date, received_at</td></tr></table>>];
+  p -> m [label="1:N", arrowhead=crow]; t -> m [label="1:N", arrowhead=crow];
+  p -> s [label="1:N", arrowhead=crow]; w -> s [label="1:N  (M2M through)", arrowhead=crow];
+  p -> h [label="1:N", arrowhead=crow]; t -> h [label="1:N", arrowhead=crow]; w -> h [label="1:N", arrowhead=crow];
+}

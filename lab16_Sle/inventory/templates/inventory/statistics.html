@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% load humanize_extra %}
+{% block title %}Статистика{% endblock %}
+{% block content %}
+<h1>Статистика склада</h1>
+<div class="cards">
+  <div class="card"><b>{{ count }}</b><span>товаров в каталоге</span></div>
+  <div class="card"><b>{{ avg_price|floatformat:2 }}</b><span>средняя цена, руб.</span></div>
+  <div class="card"><b>{{ units }}</b><span>единиц на складах</span></div>
+  <div class="card"><b>{{ value|money }}</b><span>стоимость запасов, руб.</span></div>
+  <div class="card warn"><b>{{ critical }}</b><span>критических остатков</span></div>
+  <div class="card"><b>{{ no_stock }}</b><span>нет в наличии</span></div>
+  <div class="card"><b>{{ planned }}</b><span>ожидаемых поставок</span></div>
+</div>
+<p>Поставщик-лидер по принятым поставкам: <b>{{ top_supplier.name }}</b> ({{ top_supplier.received }} поставок, {{ top_supplier.n_products }} товаров).</p>
+<div class="grid2">
+  <div class="panel"><h3>По категориям</h3>
+    <table><tr><th>Категория</th><th>Товаров</th><th>Средняя цена</th></tr>
+    {% for row in by_category %}<tr><td>{{ row.title }}</td><td class="num">{{ row.n }}</td><td class="num">{{ row.avg_price|floatformat:2 }}</td></tr>{% endfor %}
+    </table></div>
+  <div class="panel"><h3>По складам</h3>
+    <table><tr><th>Склад</th><th>Позиций</th><th>Единиц</th><th>Стоимость</th></tr>
+    {% for w in by_warehouse %}<tr><td>{{ w.name }}</td><td class="num">{{ w.positions }}</td><td class="num">{{ w.units }}</td><td class="num">{{ w.value|money }}</td></tr>{% endfor %}
+    </table></div>
+</div>
+{% endblock %}

@@ -1,0 +1,9 @@
+{% if page.paginator.num_pages > 1 %}
+<div class="pagination">
+  {% if page.has_previous %}<a href="?{{ query }}{% if query %}&{% endif %}page={{ page.previous_page_number }}">← Назад</a>{% endif %}
+  {% for n in page.paginator.page_range %}
+    <a class="{% if n == page.number %}current{% endif %}" href="?{{ query }}{% if query %}&{% endif %}page={{ n }}">{{ n }}</a>
+  {% endfor %}
+  {% if page.has_next %}<a href="?{{ query }}{% if query %}&{% endif %}page={{ page.next_page_number }}">Вперёд →</a>{% endif %}
+</div>
+{% endif %}

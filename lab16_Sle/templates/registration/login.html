@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Вход{% endblock %}
+{% block content %}
+<div class="panel narrow">
+  <h1>Вход в систему</h1>
+  {% if form.errors %}<div class="flash error">Неверное имя пользователя или пароль.</div>{% endif %}
+  {% if next and user.is_authenticated %}<div class="flash error">Недостаточно прав для этой страницы.</div>{% endif %}
+  <form method="post" class="form">
+    {% csrf_token %}
+    <label>Имя пользователя {{ form.username }}</label>
+    <label>Пароль {{ form.password }}</label>
+    <input type="hidden" name="next" value="{{ next }}">
+    <button>Войти</button>
+  </form>
+  <p class="hint">Демо-учётные записи: admin / admin12345 (администратор), manager / manager12345 (менеджер), viewer / viewer12345 (только просмотр).</p>
+</div>
+{% endblock %}

@@ -1,0 +1,14 @@
+services:
+  db:
+    image: postgres:16
+    environment: {POSTGRES_USER: "${DB_USER}", POSTGRES_PASSWORD: "${DB_PASSWORD}", POSTGRES_DB: warehouse_django}
+    volumes: [pgdata:/var/lib/postgresql/data]
+    healthcheck: {test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER}"], interval: 5s, retries: 10}
+  web:
+    build: .
+    env_file: .env                 # пароли — только в .env (cp .env.example .env)
+    environment: {DB_HOST: db, DJANGO_ALLOWED_HOSTS: "*"}
+    ports: ["8000:8000"]
+    depends_on: {db: {condition: service_healthy}}
+volumes:
+  pgdata:

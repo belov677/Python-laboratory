@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}{{ product.name }}{% endblock %}
+{% block content %}
+<h1>{{ product.name }} {% if product.is_critical %}<span class="badge red">критический остаток</span>{% endif %}</h1>
+<div class="grid2">
+  <div class="panel">
+    <dl>
+      <dt>Артикул</dt><dd>{{ product.sku }}</dd>
+      <dt>Категория</dt><dd>{{ product.get_category_display }}</dd>
+      <dt>Цена</dt><dd>{{ product.price }} руб. / {{ product.unit }}</dd>
+      <dt>Остаток</dt><dd>{{ product.total_stock }} {{ product.unit }} (минимум {{ product.min_stock }})</dd>
+      <dt>Поставщики</dt><dd>{% for s in product.suppliers.all %}<a href="{{ s.get_absolute_url }}">{{ s.name }}</a>{% if not forloop.last %}, {% endif %}{% empty %}—{% endfor %}</dd>
+      <dt>Описание</dt><dd>{{ product.description|default:"—"|linebreaksbr }}</dd>
+      <dt>Создан</dt><dd>{{ product.created_at|date:"d.m.Y H:i" }}</dd>
+    </dl>
+    <p>
+      {% if perms.inventory.change_product %}<a class="btn" href="{% url 'product_edit' product.pk %}">Изменить</a>{% endif %}
+      {% if perms.inventory.add_shipment %}<a class="btn" href="{% url 'shipment_create' %}?product={{ product.pk }}">Заказать поставку</a>{% endif %}
+      {% if perms.inventory.delete_product %}<a class="btn danger" href="{% url 'product_delete' product.pk %}">Удалить</a>{% endif %}
+    </p>
+  </div>
+  <div class="panel">
+    <h3>Остатки по складам</h3>
+    <table><tr><th>Склад</th><th>Количество</th></tr>
+      {% for s in stock %}<tr><td>{{ s.warehouse }}</td><td class="num">{{ s.quantity }}</td></tr>{% empty %}<tr><td colspan="2">Нет на складах</td></tr>{% endfor %}
+    </table>
+    <h3>Последние поставки</h3>
+    <table><tr><th>№</th><th>Поставщик</th><th>Кол-во</th><th>Статус</th></tr>
+      {% for sh in shipments %}<tr><td>{{ sh.pk }}</td><td>{{ sh.supplier }}</td><td class="num">{{ sh.quantity }}</td><td>{{ sh.get_status_display }}</td></tr>{% empty %}<tr><td colspan="4">Поставок нет</td></tr>{% endfor %}
+    </table>
+  </div>
+</div>
+{% endblock %}

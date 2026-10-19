@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}Корректировка остатка{% endblock %}
+{% block content %}
+<div class="panel narrow">
+  <h1>Инвентаризация</h1>
+  <p>{{ item.product.name }} на складе «{{ item.warehouse.name }}»</p>
+  <form method="post" class="form">{% csrf_token %}
+    <label>{{ form.quantity.label }} {{ form.quantity }}{% for e in form.quantity.errors %}<span class="err">{{ e }}</span>{% endfor %}</label>
+    <button>Сохранить</button>
+  </form>
+</div>
+{% endblock %}

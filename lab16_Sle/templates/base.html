@@ -1,0 +1,37 @@
+{% load static %}<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Склад{% endblock %} — СкладУчёт</title>
+  <link rel="stylesheet" href="{% static 'inventory/style.css' %}">
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="{% url 'index' %}">📦 СкладУчёт</a>
+  <nav>
+    <a href="{% url 'product_list' %}">Товары</a>
+    <a href="{% url 'stock_list' %}">Остатки</a>
+    <a href="{% url 'critical' %}">Критические</a>
+    <a href="{% url 'supplier_list' %}">Поставщики</a>
+    <a href="{% url 'shipment_list' %}">Поставки</a>
+    <a href="{% url 'statistics' %}">Статистика</a>
+    {% if user.is_staff %}<a href="{% url 'admin:index' %}">Admin</a>{% endif %}
+  </nav>
+  <div class="user">
+    {% if user.is_authenticated %}
+      👤 {{ user.get_full_name|default:user.username }}
+      <small>({% if user.is_superuser %}администратор{% elif perms.inventory.add_product %}менеджер{% else %}просмотр{% endif %})</small>
+      <form method="post" action="{% url 'logout' %}" class="inline">{% csrf_token %}<button class="link">Выйти</button></form>
+    {% else %}
+      <a href="{% url 'login' %}">Войти</a>
+    {% endif %}
+  </div>
+</header>
+<main class="container">
+  {% for message in messages %}<div class="flash {{ message.tags }}">{{ message }}</div>{% endfor %}
+  {% block content %}{% endblock %}
+</main>
+<footer class="footer">Лабораторная работа №16 · вариант 17 «Склад» · Django + PostgreSQL</footer>
+</body>
+</html>

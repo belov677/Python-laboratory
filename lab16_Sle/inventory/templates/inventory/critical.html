@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Критические остатки{% endblock %}
+{% block content %}
+<h1>Критические остатки <small>{{ products|length }} товаров</small></h1>
+<p class="hint">Товары, суммарный остаток которых по всем складам ниже минимального. Рекомендуемый заказ — до двойного минимума.</p>
+<table>
+  <tr><th>Артикул</th><th>Товар</th><th>Остаток</th><th>Минимум</th><th>Рекомендуемый заказ</th><th>Поставщики</th><th></th></tr>
+  {% for p in products %}
+  <tr class="low"><td>{{ p.sku }}</td><td><a href="{% url 'product_detail' p.pk %}">{{ p.name }}</a></td>
+    <td class="num">{{ p.total }}</td><td class="num">{{ p.min_stock }}</td>
+    <td class="num">{{ p.order_qty }}</td>
+    <td>{{ p.suppliers.all|join:", " }}</td>
+    <td>{% if perms.inventory.add_shipment %}<a href="{% url 'shipment_create' %}?product={{ p.pk }}">заказать</a>{% endif %}</td></tr>
+  {% empty %}<tr><td colspan="7">Критических остатков нет 👍</td></tr>{% endfor %}
+</table>
+{% endblock %}

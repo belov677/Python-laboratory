@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Главная{% endblock %}
+{% block content %}
+<section class="hero">
+  <h1>СкладУчёт — система складского учёта</h1>
+  <p>Учёт товаров, поставщиков, остатков по складам и поставок. Контроль критических остатков.</p>
+  {% if user.is_authenticated %}
+    <p>Вы вошли как <b>{{ user.username }}</b>{% if user.is_superuser %} — администратор{% endif %}.</p>
+  {% else %}
+    <p>Для работы с данными <a href="{% url 'login' %}">войдите в систему</a>.</p>
+  {% endif %}
+</section>
+<div class="cards">
+  <a class="card" href="{% url 'product_list' %}"><b>{{ products }}</b><span>товаров</span></a>
+  <a class="card" href="{% url 'supplier_list' %}"><b>{{ suppliers }}</b><span>поставщиков</span></a>
+  <a class="card" href="{% url 'stock_list' %}"><b>{{ warehouses }}</b><span>склада</span></a>
+  <a class="card warn" href="{% url 'critical' %}"><b>{{ critical }}</b><span>критических остатков</span></a>
+  <a class="card" href="{% url 'shipment_list' %}?status=planned"><b>{{ planned }}</b><span>ожидаемых поставок</span></a>
+</div>
+<h2>Разделы</h2>
+<ul class="sections">
+  <li><a href="{% url 'product_list' %}">Товары</a> — каталог с поиском, фильтрами и сортировкой</li>
+  <li><a href="{% url 'stock_list' %}">Остатки</a> — количество товаров на каждом складе</li>
+  <li><a href="{% url 'critical' %}">Критические остатки</a> — товары, которые нужно заказать</li>
+  <li><a href="{% url 'supplier_list' %}">Поставщики</a> и <a href="{% url 'shipment_list' %}">поставки</a></li>
+  <li><a href="{% url 'statistics' %}">Статистика</a> — показатели, рассчитанные средствами ORM</li>
+</ul>
+{% endblock %}

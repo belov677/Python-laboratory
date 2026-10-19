@@ -1,0 +1,6 @@
+{% extends "base.html" %}
+{% block title %}Доступ запрещён{% endblock %}
+{% block content %}
+<div class="error-page"><h1>403</h1><p>Недостаточно прав для выполнения действия. Обратитесь к администратору.</p>
+<p><a href="{% url 'index' %}">На главную</a></p></div>
+{% endblock %}

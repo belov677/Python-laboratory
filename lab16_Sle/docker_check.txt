@@ -1,0 +1,23 @@
+$ docker compose build
+ Image lab16_sle-web Built
+$ docker compose up -d --wait
+ Container lab16_sle-db-1 Started 
+ Container lab16_sle-db-1 Healthy 
+ Container lab16_sle-web-1 Started 
+ Container lab16_sle-web-1 Healthy 
+ Container lab16_sle-db-1 Healthy
+$ docker compose ps
+SERVICE   IMAGE           STATUS                    PORTS
+db        postgres:16     Up 12 seconds (healthy)   5432/tcp
+web       lab16_sle-web   Up 6 seconds              0.0.0.0:8000->8000/tcp
+$ docker compose exec -T web python manage.py seed
+Склады: 3, поставщики: 6, товары: 24, остатки: 52, поставки: 14, пользователи: 3
+$ curl -s localhost:8000/ | grep -o '<b>[0-9]*</b><span>[^<]*' | head -4
+<b>24</b><span>товаров
+<b>6</b><span>поставщиков
+<b>3</b><span>склада
+<b>4</b><span>критических остатков
+$ curl -s -o /dev/null -w 'GET /products/ без входа → %{http_code} %{redirect_url}\n' localhost:8000/products/
+GET /products/ без входа → 302 http://localhost:8000/accounts/login/?next=/products/
+$ docker compose down -v
+ Network lab16_sle_default Removed 
