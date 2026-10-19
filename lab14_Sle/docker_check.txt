@@ -1,0 +1,23 @@
+$ docker compose build
+ Image lab14_sle-api Built
+$ docker compose up -d --wait
+ Container lab14_sle-postgres-1 Started 
+ Container lab14_sle-redis-1 Started 
+ Container lab14_sle-postgres-1 Healthy 
+ Container lab14_sle-api-1 Started 
+ Container lab14_sle-postgres-1 Healthy 
+ Container lab14_sle-api-1 Healthy 
+ Container lab14_sle-redis-1 Healthy
+$ docker compose ps
+SERVICE    IMAGE           STATUS                    PORTS
+api        lab14_sle-api   Up 6 seconds              0.0.0.0:8000->8000/tcp
+postgres   postgres:16     Up 12 seconds (healthy)   5432/tcp
+redis      redis:7         Up 12 seconds             6379/tcp
+$ curl -s localhost:8000/health; echo
+{"status":"healthy"}
+$ TOKEN=$(curl -s -X POST localhost:8000/auth/login -d 'username=admin&password=admin12345' | python3 -c 'import json,sys;print(json.load(sys.stdin)["access_token"])'); curl -s localhost:8000/items/statistics -H "Authorization: Bearer $TOKEN"; echo
+{"total_items":0,"total_units":0,"stock_value":0.0,"average_price":0.0,"below_min":0,"expiring_30_days":0,"by_category":{}}
+$ curl -s -o /dev/null -w 'GET /items без токена → %{http_code}\n' localhost:8000/items
+GET /items без токена → 401
+$ docker compose down -v
+ Network lab14_sle_default Removed 

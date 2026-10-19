@@ -1,0 +1,20 @@
+services:
+  api:
+    build: .
+    ports: ["8000:8000"]
+    env_file: .env
+    environment:
+      DATABASE_URL: postgresql+psycopg://lab:${POSTGRES_PASSWORD:-lab}@postgres:5432/warehouse_api
+      REDIS_URL: redis://redis:6379/0
+    depends_on:
+      postgres: {condition: service_healthy}
+      redis: {condition: service_started}
+  postgres:
+    image: postgres:16
+    environment: {POSTGRES_USER: lab, POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:-lab}", POSTGRES_DB: warehouse_api}
+    volumes: ["pgdata:/var/lib/postgresql/data"]
+    healthcheck: {test: ["CMD-SHELL", "pg_isready -U lab"], interval: 5s, retries: 10}
+  redis:
+    image: redis:7
+volumes:
+  pgdata:
