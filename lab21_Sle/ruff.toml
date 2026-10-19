@@ -1,0 +1,15 @@
+line-length = 120
+target-version = "py312"
+src = ["src"]
+extend-exclude = ["migrations/versions"]
+
+[lint]
+select = ["E", "F", "W", "I", "B", "UP", "ASYNC", "S"]
+ignore = ["B008", "S101"]   # Depends() в аргументах FastAPI; assert в тестах
+
+[lint.per-file-ignores]
+"tests/**" = ["S105", "S106", "S311"]   # тестовые пароли и случайные данные
+"demo.py" = ["S603", "S607"]               # демо-скрипт вызывает docker compose с фиксированными аргументами
+
+[lint.isort]
+known-first-party = ["app"]

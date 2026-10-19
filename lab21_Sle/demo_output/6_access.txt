@@ -1,0 +1,11 @@
+=== 6. Разграничение доступа ===
+$ GET /orders/2 [JWT другого клиента]
+  → 403: {"error":"NOT_OWNER","message":"Это заказ другого клиента"}
+$ GET /orders [JWT другого клиента]
+  → 200: total=0
+$ GET /orders?size=1 [JWT ADMIN]
+  → 200 за 16 мс: {"items": [{"id": 2, "customer_id": 2, "origin": "Москва", "destination": "Санкт-Петербург", "cargo": "Мебель", "weight_ …
+$ POST /routes [JWT USER]  {"code": "R-300", "origin": "Тула", "destination": "Орёл", "distance_km": 180, "duration_h": 2.5}
+  → 403 за 9 мс: {"error": "ADMIN_ONLY", "message": "Операция доступна только диспетчеру (ADMIN)"}
+$ GET /orders/99999 [JWT ADMIN]
+  → 404 за 13 мс: {"error": "ЗАКАЗ_NOT_FOUND", "message": "Заказ с id=99999 не найден(а)"}

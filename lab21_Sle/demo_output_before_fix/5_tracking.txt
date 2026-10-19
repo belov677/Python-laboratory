@@ -1,0 +1,23 @@
+=== 5. Выполнение рейса, отслеживание, уведомления от worker ===
+$ PATCH /deliveries/1/status [JWT ADMIN]  {"action": "complete"}
+  → 409 за 20 мс: {"error": "INVALID_TRANSITION", "message": "Действие complete недопустимо для рейса в статусе PLANNED"}
+$ PATCH /deliveries/1/status [JWT ADMIN]  {"action": "start"}
+  → 200 за 35 мс: {"id": 1, "order_id": 1, "status": "IN_TRANSIT", "planned_start": "2026-10-18T06:00:00Z", "planned_end": "2026-10-18T16: …
+$ GET /orders/1/tracking [JWT USER]
+  → 200 за 30 мс: {"order": {"id": 1, "customer_id": 2, "origin": "Москва", "destination": "Санкт-Петербург", "cargo": "Серверное оборудование, 6 стоек", "weight_kg": 4200, "pickup_at": "2026-10-18T06:00:00Z", "deadline_at": "2026-10-19T06:00:00Z", "status": "IN_TRANSIT", "created_at": "2026-10-16T19:46:40.017255Z"}, "delivery": {"id": 1, "order_id": 1, "status": "IN_TRANSIT", "planned_start": "2026-10-18T06:00:00Z", "planned_end": "2026-10-18T16:30:00Z", "cost": 33450.0, "finished_at": null, "route": {"code": "R-101", "origin": "Москва", "destination": "Санкт-Петербург", "distance_km": 710, "duration_h": 9.5,  …
+$ PATCH /deliveries/1/status [JWT ADMIN]  {"action": "complete"}
+  → 200 за 20 мс: {"id": 1, "order_id": 1, "status": "DELIVERED", "planned_start": "2026-10-18T06:00:00Z", "planned_end": "2026-10-18T16:3 …
+$ DELETE /orders/1 [JWT USER]
+  → 409 за 16 мс: {"error": "ORDER_NOT_CANCELLABLE", "message": "Заказ в статусе DELIVERED отменить нельзя"}
+$ GET /auth/me/notifications [JWT USER]
+  • Заказ №1: назначен ГАЗон Next К404КК16, водитель Смирнов Олег Игоревич, подача 18.10.2026 06:00. Стоимость 33450.00 руб.
+  • Заказ №2 (Москва → Санкт-Петербург) принят. Мы подберём транспорт и сообщим детали.
+  • Заказ №1 (Москва → Санкт-Петербург) принят. Мы подберём транспорт и сообщим детали.
+  • Заказ №1: груз доставлен.
+  • Заказ №1: груз в пути.
+  ── журнал worker ──
+  19:46:41 logistics-app INFO app.worker: уведомление клиенту 2 (e-mail, имитация отправки): Заказ №1: назначен ГАЗон Next К404КК16, водитель Смирнов Олег Игоревич, подача 18.10.2026 06:00. Стоимость 33450.00 руб.
+  19:46:41 logistics-app INFO app.worker: уведомление клиенту 2 (e-mail, имитация отправки): Заказ №2 (Москва → Санкт-Петербург) принят. Мы подберём транспорт и сообщим детали.
+  19:46:41 logistics-app INFO app.worker: уведомление клиенту 2 (e-mail, имитация отправки): Заказ №1: груз доставлен.
+  19:46:41 logistics-app INFO app.worker: уведомление клиенту 2 (e-mail, имитация отправки): Заказ №1 (Москва → Санкт-Петербург) принят. Мы подберём транспорт и сообщим детали.
+  19:46:41 logistics-app INFO app.worker: уведомление клиенту 2 (e-mail, имитация отправки): Заказ №1: груз в пути.

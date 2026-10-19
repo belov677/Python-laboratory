@@ -1,0 +1,18 @@
+=== 7. Отказоустойчивость: недоступен Redis ===
+$ docker compose stop redis
+$ GET /routes [JWT USER]
+  → 200 X-Cache=BYPASS за 10 мс: [{"code": "R-101", "origin": "Москва", "destination": "Санкт-Петербург", "distance_km": 710, "duration_h": 9.5, "waypoin …
+$ GET /routes [JWT USER]
+  → 200 X-Cache=BYPASS за 13 мс: [{"code": "R-101", "origin": "Москва", "destination": "Санкт-Петербург", "distance_km": 710, "duration_h": 9.5, "waypoin …
+$ GET /health
+  → 200 за 28 мс: {"status": "degraded", "checks": {"database": "up", "redis": "down", "broker": "up"}, "outbox_backlog": 0}
+$ docker compose start redis
+$ GET /routes [JWT USER]
+  → 200 X-Cache=HIT за 11 мс: [{"code": "R-101", "origin": "Москва", "destination": "Санкт-Петербург", "distance_km": 710, "duration_h": 9.5, "waypoin …
+$ GET /routes [JWT USER]
+  → 200 X-Cache=HIT за 7 мс: [{"code": "R-101", "origin": "Москва", "destination": "Санкт-Петербург", "distance_km": 710, "duration_h": 9.5, "waypoin …
+$ GET /health
+  → 200 за 9 мс: {"status": "healthy", "checks": {"database": "up", "redis": "up", "broker": "up"}, "outbox_backlog": 0}
+  ── журнал app ──
+  19:59:38 logistics-app WARNING app.cache: Redis недоступен (ConnectionError): кэш отключён на 15 с
+  19:59:40 logistics-app INFO app.cache: Redis снова доступен: кэш включён

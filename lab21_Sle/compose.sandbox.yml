@@ -1,0 +1,16 @@
+# Только для учебной среды с прокси и собственным CA (см. README).
+services:
+  app:
+    build:
+      network: host
+      args: {HTTPS_PROXY: "${HTTPS_PROXY}"}
+      secrets: [ca_bundle]
+  worker:
+    build:
+      network: host
+      args: {HTTPS_PROXY: "${HTTPS_PROXY}"}
+      secrets: [ca_bundle]
+
+secrets:
+  ca_bundle:
+    file: ${CA_BUNDLE:-/root/.ccr/ca-bundle.crt}

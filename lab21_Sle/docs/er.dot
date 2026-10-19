@@ -1,0 +1,25 @@
+digraph ER {
+  rankdir=LR; node [shape=plaintext, fontname="DejaVu Sans", fontsize=10]; edge [fontname="DejaVu Sans", fontsize=9, arrowhead=crow];
+  users [label=<<table border="0" cellborder="1" cellspacing="0"><tr><td bgcolor="#dbe8f5"><b>users</b></td></tr>
+   <tr><td align="left">id PK</td></tr><tr><td align="left">email UNIQUE</td></tr><tr><td align="left">password_hash</td></tr><tr><td align="left">full_name, role ENUM</td></tr></table>>];
+  orders [label=<<table border="0" cellborder="1" cellspacing="0"><tr><td bgcolor="#dbe8f5"><b>orders</b></td></tr>
+   <tr><td align="left">id PK</td></tr><tr><td align="left">customer_id FK (idx)</td></tr><tr><td align="left">origin, destination, cargo</td></tr>
+   <tr><td align="left">weight_kg CHECK &gt; 0</td></tr><tr><td align="left">pickup_at, deadline_at CHECK</td></tr><tr><td align="left">status ENUM (idx status+created_at)</td></tr></table>>];
+  routes [label=<<table border="0" cellborder="1" cellspacing="0"><tr><td bgcolor="#dbe8f5"><b>routes</b></td></tr>
+   <tr><td align="left">id PK</td></tr><tr><td align="left">code UNIQUE</td></tr><tr><td align="left">origin, destination UNIQUE</td></tr><tr><td align="left">distance_km, duration_h CHECK</td></tr><tr><td align="left">waypoints JSON</td></tr></table>>];
+  vehicles [label=<<table border="0" cellborder="1" cellspacing="0"><tr><td bgcolor="#dbe8f5"><b>vehicles</b></td></tr>
+   <tr><td align="left">id PK</td></tr><tr><td align="left">plate UNIQUE</td></tr><tr><td align="left">model, category ENUM</td></tr><tr><td align="left">capacity_kg CHECK, status</td></tr></table>>];
+  drivers [label=<<table border="0" cellborder="1" cellspacing="0"><tr><td bgcolor="#dbe8f5"><b>drivers</b></td></tr>
+   <tr><td align="left">id PK</td></tr><tr><td align="left">license_number UNIQUE</td></tr><tr><td align="left">license_categories JSON</td></tr><tr><td align="left">full_name, phone, active</td></tr></table>>];
+  deliveries [label=<<table border="0" cellborder="1" cellspacing="0"><tr><td bgcolor="#f6e3c8"><b>deliveries</b></td></tr>
+   <tr><td align="left">id PK</td></tr><tr><td align="left">order_id, route_id, vehicle_id, driver_id FK</td></tr>
+   <tr><td align="left">planned_start, planned_end CHECK</td></tr><tr><td align="left">status ENUM, cost, finished_at</td></tr>
+   <tr><td align="left">EXCLUDE gist (vehicle_id =, период &amp;&amp;)</td></tr><tr><td align="left">EXCLUDE gist (driver_id =, период &amp;&amp;)</td></tr>
+   <tr><td align="left">UNIQUE активный рейс на заказ</td></tr></table>>];
+  notif [label=<<table border="0" cellborder="1" cellspacing="0"><tr><td bgcolor="#eeeeee"><b>notifications</b></td></tr>
+   <tr><td align="left">user_id FK, event_id UNIQUE</td></tr><tr><td align="left">channel, text</td></tr></table>>];
+  outbox [label=<<table border="0" cellborder="1" cellspacing="0"><tr><td bgcolor="#eeeeee"><b>outbox_events</b></td></tr>
+   <tr><td align="left">event_id UNIQUE, name</td></tr><tr><td align="left">payload JSON, published_at (idx)</td></tr></table>>];
+  users -> orders [label="1:N"]; users -> notif [label="1:N"];
+  orders -> deliveries [label="1:N"]; routes -> deliveries [label="1:N"]; vehicles -> deliveries [label="1:N"]; drivers -> deliveries [label="1:N"];
+}

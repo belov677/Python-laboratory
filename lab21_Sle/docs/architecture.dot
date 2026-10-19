@@ -1,0 +1,24 @@
+digraph A {
+  rankdir=TB; nodesep=0.4; ranksep=0.45;
+  node [fontname="DejaVu Sans", fontsize=10.5, shape=box, style="rounded,filled", fillcolor="#eef3fb", color="#4a6fa5"];
+  edge [fontname="DejaVu Sans", fontsize=9, color="#4a5560"];
+  client [label="Клиент / диспетчер\nSwagger UI, curl", fillcolor="#ffffff"];
+  subgraph cluster_app { label="контейнер app (FastAPI, uvicorn)"; fontname="DejaVu Sans"; fontsize=10; style="dashed"; color="#4a6fa5";
+    mw [label="Middleware: журнал HTTP, X-Request-ID, метрики"];
+    api [label="API (routers): auth, routes, vehicles, drivers, orders, deliveries\nJWT, роли USER / ADMIN, Pydantic-валидация, обработчики ошибок"];
+    svc [label="Сервисы: AuthService, CatalogService, OrderService, DeliveryService\nбизнес-правила, транзакции, события в outbox", fillcolor="#e3f1e3", color="#4f8a4f"];
+    repo [label="Репозитории (SQLAlchemy 2, async)"];
+    cache [label="RedisCache\nhit / miss / bypass + Circuit Breaker", fillcolor="#fdf0d8", color="#b5832b"];
+    relay [label="OutboxRelay\n(фоновая задача)", fillcolor="#ffe9e0", color="#c0583a"];
+    mw -> api -> svc -> repo;
+    svc -> cache [style=dashed];
+  }
+  db [label="PostgreSQL 16\nusers, routes, vehicles, drivers, orders,\ndeliveries (EXCLUDE GiST), outbox_events, notifications", shape=cylinder, fillcolor="#ffffff"];
+  redis [label="Redis 7\nкэш каталога маршрутов", shape=cylinder, fillcolor="#ffffff", color="#b5832b"];
+  mq [label="RabbitMQ\nexchange logistics.final", shape=box3d, fillcolor="#ffe9e0", color="#c0583a"];
+  worker [label="контейнер worker\nуведомления клиентам\n(e-mail/SMS — имитация)", fillcolor="#f3e3f3", color="#8a4f8a"];
+  client -> mw [label=" HTTPS / JSON"];
+  repo -> db; cache -> redis; relay -> db [label=" неотправленные события", style=dashed];
+  relay -> mq [label=" OrderCreated, DeliveryScheduled,\n DeliveryStatusChanged, OrderCancelled", color="#c0583a", fontcolor="#c0583a"];
+  mq -> worker [color="#c0583a"]; worker -> db [label=" notifications"];
+}

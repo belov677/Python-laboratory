@@ -1,0 +1,64 @@
+# cp .env.example .env (или ./scripts/make_env.sh) && docker compose up --build -d
+
+x-app: &app
+  build: .
+  image: logistics-final/app:${IMAGE_TAG:-latest}
+  restart: unless-stopped
+  environment:
+    DATABASE_URL: postgresql+psycopg://logistics_app:${POSTGRES_PASSWORD}@db:5432/logistics_final
+    REDIS_URL: redis://redis:6379/0
+    BROKER_URL: amqp://logistics:${RABBITMQ_PASSWORD}@rabbitmq:5672/
+    JWT_SECRET: ${JWT_SECRET}
+    ADMIN_EMAIL: ${ADMIN_EMAIL}
+    ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+    SEED_DEMO_DATA: ${SEED_DEMO_DATA:-1}
+    LOG_LEVEL: ${LOG_LEVEL:-INFO}
+  logging: {driver: json-file, options: {max-size: "10m", max-file: "3"}}
+  networks: [backend]
+
+services:
+  app:
+    <<: *app
+    command: ["api"]
+    ports: ["${PUBLIC_PORT:-8000}:8000"]
+    depends_on:
+      db: {condition: service_healthy}
+      redis: {condition: service_healthy}
+      rabbitmq: {condition: service_healthy}
+
+  worker:
+    <<: *app
+    command: ["worker"]
+    healthcheck: {disable: true}
+    depends_on:
+      app: {condition: service_healthy}         # миграции выполнены сервисом app
+
+  db:
+    image: postgres:16
+    restart: unless-stopped
+    environment: {POSTGRES_USER: logistics_app, POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}", POSTGRES_DB: logistics_final}
+    volumes: [pgdata:/var/lib/postgresql/data]
+    healthcheck: {test: ["CMD-SHELL", "pg_isready -U logistics_app -d logistics_final"], interval: 5s, retries: 10}
+    networks: [backend]
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: ["redis-server", "--maxmemory", "64mb", "--maxmemory-policy", "allkeys-lru"]
+    healthcheck: {test: ["CMD", "redis-cli", "ping"], interval: 5s, retries: 10}
+    networks: [backend]
+
+  rabbitmq:
+    image: rabbitmq:3.12-management-alpine
+    restart: unless-stopped
+    environment: {RABBITMQ_DEFAULT_USER: logistics, RABBITMQ_DEFAULT_PASS: "${RABBITMQ_PASSWORD}"}
+    volumes: [rabbitmq-data:/var/lib/rabbitmq]
+    healthcheck: {test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"], interval: 10s, timeout: 10s, retries: 12}
+    networks: [backend]
+
+networks:
+  backend:
+
+volumes:
+  pgdata:
+  rabbitmq-data:

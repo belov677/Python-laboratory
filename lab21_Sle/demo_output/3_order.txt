@@ -1,0 +1,11 @@
+=== 3. Создание заказа и бизнес-правила ===
+$ POST /orders [JWT USER]  {"origin": "Москва", "destination": "Владивосток", "cargo": "Серверное оборудование, 6 стоек", "weight_kg": 4200, "pickup_at": "2026-10-18T06:00:00+00:00", "deadline_at": "2026-10-19T06:00:00+00:00"}
+  → 409 за 15 мс: {"error": "NO_ROUTE", "message": "Компания не обслуживает направление Москва → Владивосток"}
+$ POST /orders [JWT USER]  {"origin": "Москва", "destination": "Санкт-Петербург", "cargo": "Серверное оборудование, 6 стоек", "weight_kg": 4200, "pickup_at": "2026-10-18T06:00:00+00:00", "deadline_at": "2026-10-18T11:00:00+00:00"}
+  → 409 за 12 мс: {"error": "DEADLINE_TOO_SHORT", "message": "Срок нереалистичен: по маршруту R-101 в пути 9.5 ч, а отведено 5.0 ч"}
+$ POST /orders [JWT USER]  {"origin": "Москва", "destination": "Санкт-Петербург", "cargo": "Серверное оборудование, 6 стоек", "weight_kg": 0, "pickup_at": "2026-10-18T06:00:00+00:00", "deadline_at": "2026-10-18T06:00:00+00:00"}
+  → 422 за 7 мс: {"error": "VALIDATION_ERROR", "message": "Некорректные входные данные", "details": [{"field": "weight_kg", "message": "Input should be greater than 0"}]}
+$ POST /orders [JWT USER]  {"origin": "Москва", "destination": "Санкт-Петербург", "cargo": "Серверное оборудование, 6 стоек", "weight_kg": 4200, "pickup_at": "2026-10-18T06:00:00+00:00", "deadline_at": "2026-10-19T06:00:00+00:00"}
+  → 201 за 17 мс: {"id": 1, "customer_id": 2, "origin": "Москва", "destination": "Санкт-Петербург", "cargo": "Серверное оборудование, 6 стоек", "weight_kg": 4200, "pickup_at": "2026-10-18T06:00:00Z", "deadline_at": "2026-10-19T06:00:00Z", "status": "NEW", "created_at": "2026-10-16T19:59:32.739672Z"}
+$ GET /orders?status=NEW&sort=-created_at&page=1&size=5 [JWT USER]
+  → 200 за 21 мс: {"items": [{"id": 1, "customer_id": 2, "origin": "Москва", "destination": "Санкт-Петербург", "cargo": "Серверное оборудование, 6 стоек", "weight_kg": 4200, "pickup_at": "2026-10-18T06:00:00Z", "deadli …

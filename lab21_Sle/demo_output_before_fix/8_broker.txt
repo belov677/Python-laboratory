@@ -1,0 +1,16 @@
+=== 8. Отказоустойчивость: недоступен RabbitMQ (Transactional Outbox) ===
+$ docker compose stop rabbitmq
+$ POST /orders [JWT USER]  {"origin": "Москва", "destination": "Санкт-Петербург", "cargo": "Стройматериалы", "weight_kg": 300, "pickup_at": "2026-10-18T06:00:00+00:00", "deadline_at": "2026-10-19T06:00:00+00:00"}
+  → 201 за 20 мс: {"id": 3, "customer_id": 2, "origin": "Москва", "destination": "Санкт-Петербург", "cargo": "Стройматериалы", "weight_kg": 300, "pickup_at": "2026-10-18T06:00:00Z", "deadline_at": "2026-10-19T06:00:00Z", "status": "NEW", "created_at": "2026-10-16T19:47:08.648651Z"}
+$ GET /health
+  → 200 за 7 мс: {"status": "healthy", "checks": {"database": "up", "redis": "up", "broker": "up"}}
+  ── журнал app ──
+  19:47:09 logistics-app WARNING app.events: событие OrderCreated не опубликовано: <aio_pika.robust_channel.RobustChannel object at 0x7ffb37983380> closed
+$ docker compose start rabbitmq
+$ GET /auth/me/notifications → последнее: Заказ №3 (Москва → Санкт-Петербург) принят. Мы подберём транспорт и сообщим детали.
+$ GET /health
+  → 200 за 6 мс: {"status": "healthy", "checks": {"database": "up", "redis": "up", "broker": "up"}}
+  ── журнал app ──
+  19:47:23 logistics-app INFO app.events: событие опубликовано: OrderCreated {'order_id': 3, 'customer_id': 2, 'route': 'Москва → Санкт-Петербург'}
+  ── журнал worker ──
+  19:47:23 logistics-app INFO app.worker: уведомление клиенту 2 (e-mail, имитация отправки): Заказ №3 (Москва → Санкт-Петербург) принят. Мы подберём транспорт и сообщим детали.

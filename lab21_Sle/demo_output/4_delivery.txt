@@ -1,0 +1,13 @@
+=== 4. Подбор транспорта и водителя, назначение рейса ===
+$ GET /deliveries/available?order_id=1 [JWT ADMIN]
+  → 200 за 26 мс: {"order_id": 1, "route": {"code": "R-101", "origin": "Москва", "destination": "Санкт-Петербург", "distance_km": 710, "duration_h": 9.5, "waypoints": ["Тверь", "Великий Новгород"], "id": 1}, "window": {"start": "2026-10-18T06:00:00+00:00", "end": "2026-10-18T16:30:00+00:00"}, "vehicles": [{"plate": "К404КК16", "model": "ГАЗон Next", "category": "C", "capacity_kg": 5000, "status": "ACTIVE", "id": 4}, {"plate": "Е303ЕЕ78", "model": "КАМАЗ 65115", "category": "C", "capacity_kg": 15000, "status": "ACTIVE", "id": 3}, {"plate": "М505ММ66", "model": "Volvo FH + полуприцеп", "category": "CE", "capacity_kg": 40000, "status": "ACTIVE", "id": 5}], "drivers": [{"full_name": "Смирнов Олег Игоревич", "license_number": "77 01 100002", "license_categories": ["B", "C"], "phone": "+79160000002", "active": true, "id": 2}, {"full_name": "Кузнецова Анна Викторовна", "license_number": "78 02 200003", "license_ …
+$ POST /deliveries [JWT ADMIN]  {"order_id": 1, "vehicle_id": 1, "driver_id": 2}
+  → 409 за 18 мс: {"error": "VEHICLE_CAPACITY", "message": "Грузоподъёмность А101АА77 — 1500 кг, а груз 4200 кг"}
+$ POST /deliveries [JWT ADMIN]  {"order_id": 1, "vehicle_id": 4, "driver_id": 1}
+  → 409 за 15 мс: {"error": "DRIVER_LICENSE", "message": "У водителя нет категории C для К404КК16"}
+$ POST /deliveries [JWT ADMIN]  {"order_id": 1, "vehicle_id": 4, "driver_id": 2}
+  → 201 за 31 мс: {"id": 1, "order_id": 1, "status": "PLANNED", "planned_start": "2026-10-18T06:00:00Z", "planned_end": "2026-10-18T16:30:00Z", "cost": 33450.0, "finished_at": null, "route": {"code": "R-101", "origin": "Москва", "destination": "Санкт-Петербург", "distance_km": 710, "duration_h": 9.5, "waypoints": ["Тверь", "Великий Новгород"], "i …
+$ POST /orders [JWT USER]  {"origin": "Москва", "destination": "Санкт-Петербург", "cargo": "Мебель", "weight_kg": 900, "pickup_at": "2026-10-18T06:00:00+00:00", "deadline_at": "2026-10-19T06:00:00+00:00"}
+  → 201 за 16 мс: {"id": 2, "customer_id": 2, "origin": "Москва", "destination": "Санкт-Петербург", "cargo": "Мебель", "weight_kg": 900, "pickup_at": "2026-10-18T06:00:00Z", "deadline_at": "2026-10-19T06:00:00Z", "status": "NEW", "created_at": "2026-10-16T19:59:32.871478Z"}
+$ POST /deliveries [JWT ADMIN]  {"order_id": 2, "vehicle_id": 4, "driver_id": 3}
+  → 409 за 17 мс: {"error": "VEHICLE_BUSY", "message": "Транспорт К404КК16 занят в это время"}

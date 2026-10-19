@@ -1,0 +1,16 @@
+=== 1. Регистрация и авторизация (JWT, роли USER и ADMIN) ===
+$ POST /auth/register  {"email": "client@example.com", "password": "Client2026", "full_name": "ООО «ТехноМир»"}
+  → 201 за 176 мс: {"id": 2, "email": "client@example.com", "full_name": "ООО «ТехноМир»", "role": "USER"}
+$ POST /auth/register  {"email": "client@example.com", "password": "Client2026", "full_name": "Дубль"}
+  → 409 за 7 мс: {"error": "EMAIL_TAKEN", "message": "Пользователь client@example.com уже зарегистрирован"}
+$ POST /auth/login  {"email": "client@example.com", "password": "неверный1"}
+  → 401 за 157 мс: {"error": "INVALID_CREDENTIALS", "message": "Неверный email или пароль"}
+$ POST /auth/login  {"email": "client@example.com", "password": "Client2026"}
+  → 200 за 147 мс: {"access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3OTIxODA3NzIsImV4cCI6MTc5MjE4NDM3Mn0.eoJCESpx7HI8infL6sWCUQZA3MlknUi6JA-ORwiFddY", "token_type": "bearer", "role": "USER"}
+$ POST /auth/login  (диспетчер dispatcher@example.com) → роль ADMIN
+$ GET /auth/me [JWT USER]
+  → 200 за 8 мс: {"id": 2, "email": "client@example.com", "full_name": "ООО «ТехноМир»", "role": "USER"}
+$ GET /orders
+  → 401 за 6 мс: {"error": "NOT_AUTHENTICATED", "message": "Требуется авторизация: заголовок Authorization: Bearer <токен>"}
+$ GET /vehicles [JWT USER]
+  → 403 за 8 мс: {"error": "ADMIN_ONLY", "message": "Операция доступна только диспетчеру (ADMIN)"}
