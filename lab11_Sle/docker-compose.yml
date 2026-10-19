@@ -1,0 +1,28 @@
+# Дополнительное задание №7: инфраструктура api + postgres + redis (CDN остаётся внешним)
+services:
+  api:
+    build: .
+    environment:
+      DATABASE_URL: postgresql://lab:${POSTGRES_PASSWORD:-lab}@postgres:5432/warehouse
+      REDIS_URL: redis://redis:6379/0
+      API_KEY: ${API_KEY:-secret-key}
+    command: ["python", "app/app.py", "--host", "0.0.0.0", "--port", "5000", "--reset-db"]
+    ports: ["5000:5000"]
+    depends_on:
+      postgres: {condition: service_healthy}
+      redis: {condition: service_started}
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: lab
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-lab}
+      POSTGRES_DB: warehouse
+    volumes: ["pgdata:/var/lib/postgresql/data"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U lab -d warehouse"]
+      interval: 5s
+      retries: 10
+  redis:
+    image: redis:7
+volumes:
+  pgdata:

@@ -1,0 +1,62 @@
+2026-10-15 21:33:05,876 INFO Server started on 127.0.0.1:5017 (UDP status on 5018)
+2026-10-15 21:33:06,855 INFO Client connected: 127.0.0.1:32882 (активных: 1)
+2026-10-15 21:33:06,855 INFO Command from 127.0.0.1:32882: list 
+2026-10-15 21:33:06,855 INFO Command list from 127.0.0.1:32882: OK
+2026-10-15 21:33:06,856 INFO Command from 127.0.0.1:32882: slow {'seconds': 2.0}
+2026-10-15 21:33:07,145 INFO Client connected: 127.0.0.1:32892 (активных: 2)
+2026-10-15 21:33:07,146 INFO Command from 127.0.0.1:32892: search_by_category {'category': 'обезболивающие'}
+2026-10-15 21:33:07,146 INFO Command search_by_category from 127.0.0.1:32892: OK
+2026-10-15 21:33:07,147 INFO Command from 127.0.0.1:32892: delete {'id': 6}
+2026-10-15 21:33:07,147 INFO Command delete from 127.0.0.1:32892: OK
+2026-10-15 21:33:07,147 INFO Command from 127.0.0.1:32892: list 
+2026-10-15 21:33:07,147 INFO Command list from 127.0.0.1:32892: OK
+2026-10-15 21:33:07,148 INFO Client disconnected: 127.0.0.1:32892
+2026-10-15 21:33:07,178 INFO Client connected: 127.0.0.1:32896 (активных: 2)
+2026-10-15 21:33:07,178 INFO Command from 127.0.0.1:32896: search_by_category {'category': 'витамины'}
+2026-10-15 21:33:07,178 INFO Command search_by_category from 127.0.0.1:32896: OK
+2026-10-15 21:33:07,179 INFO Command from 127.0.0.1:32896: update {'id': 4, 'quantity': 100}
+2026-10-15 21:33:07,179 INFO Command update from 127.0.0.1:32896: OK
+2026-10-15 21:33:07,179 INFO Command from 127.0.0.1:32896: get {'id': 4}
+2026-10-15 21:33:07,179 INFO Command get from 127.0.0.1:32896: OK
+2026-10-15 21:33:07,180 INFO Client disconnected: 127.0.0.1:32896
+2026-10-15 21:33:08,856 INFO Command slow from 127.0.0.1:32882: OK
+2026-10-15 21:33:08,857 INFO Command from 127.0.0.1:32882: create {'name': 'Цитрамон', 'category': 'обезболивающие', 'manufacturer': 'Фармстандарт', 'price': 65.5, 'quantity': 30, 'prescription': False}
+2026-10-15 21:33:08,858 INFO Command create from 127.0.0.1:32882: OK
+2026-10-15 21:33:08,858 INFO Command from 127.0.0.1:32882: get {'id': 7}
+2026-10-15 21:33:08,858 INFO Command get from 127.0.0.1:32882: OK
+2026-10-15 21:33:08,859 INFO Client disconnected: 127.0.0.1:32882
+2026-10-15 21:33:08,940 INFO Client connected: 127.0.0.1:32908 (активных: 1)
+2026-10-15 21:33:08,942 INFO Command from 127.0.0.1:32908: get {'id': 999}
+2026-10-15 21:33:08,942 WARNING Bad request from 127.0.0.1:32908: Препарат с id=999 не найден
+2026-10-15 21:33:08,942 INFO Command from 127.0.0.1:32908: get {'id': -3}
+2026-10-15 21:33:08,942 WARNING Bad request from 127.0.0.1:32908: Идентификатор должен быть положительным целым числом
+2026-10-15 21:33:08,943 INFO Command from 127.0.0.1:32908: create {'name': '', 'category': 'космос', 'manufacturer': 'X', 'price': 'abc', 'quantity': 5, 'prescription': False}
+2026-10-15 21:33:08,943 WARNING Bad request from 127.0.0.1:32908: Название препарата не может быть пустым
+2026-10-15 21:33:08,943 INFO Command from 127.0.0.1:32908: update {'id': 1, 'price': -100.0}
+2026-10-15 21:33:08,943 WARNING Bad request from 127.0.0.1:32908: Цена должна быть положительным числом
+2026-10-15 21:33:08,944 INFO Command from 127.0.0.1:32908: delete {'id': 999}
+2026-10-15 21:33:08,944 WARNING Bad request from 127.0.0.1:32908: Препарат с id=999 не найден
+2026-10-15 21:33:08,944 INFO Command from 127.0.0.1:32908: search_by_category {'category': 'сладости'}
+2026-10-15 21:33:08,944 WARNING Bad request from 127.0.0.1:32908: Неизвестная категория «сладости»
+2026-10-15 21:33:08,945 WARNING Bad request from 127.0.0.1:32908: Некорректный JSON: Expecting property name enclosed in double quotes: line 1 column 2 (char 1)
+2026-10-15 21:33:08,945 INFO Command from 127.0.0.1:32908: fly 
+2026-10-15 21:33:08,945 WARNING Bad request from 127.0.0.1:32908: Неизвестная команда: fly
+2026-10-15 21:33:08,945 INFO Client disconnected: 127.0.0.1:32908
+2026-10-15 21:33:09,004 INFO Client connected: 127.0.0.1:32912 (активных: 1)
+2026-10-15 21:33:09,004 INFO Command from 127.0.0.1:32912: slow {'seconds': 3.0}
+2026-10-15 21:33:10,069 INFO Client connected: 127.0.0.1:32916 (активных: 2)
+2026-10-15 21:33:10,069 INFO Command from 127.0.0.1:32916: ping 
+2026-10-15 21:33:10,069 INFO Command ping from 127.0.0.1:32916: OK
+2026-10-15 21:33:10,070 INFO Command from 127.0.0.1:32916: history 
+2026-10-15 21:33:10,070 INFO Command history from 127.0.0.1:32916: OK
+2026-10-15 21:33:10,071 INFO Command from 127.0.0.1:32916: shutdown {'token': 'wrong'}
+2026-10-15 21:33:10,071 WARNING Bad request from 127.0.0.1:32916: Неверный токен администратора
+2026-10-15 21:33:10,071 INFO Command from 127.0.0.1:32916: shutdown {'token': 'admin-secret'}
+2026-10-15 21:33:10,071 WARNING Получена команда shutdown — сервер завершает работу
+2026-10-15 21:33:10,071 INFO Command shutdown from 127.0.0.1:32916: OK
+2026-10-15 21:33:10,071 INFO Client disconnected: 127.0.0.1:32916
+2026-10-15 21:33:11,070 INFO Прекращён приём новых клиентов, ожидание завершения текущих операций
+2026-10-15 21:33:12,004 INFO Command slow from 127.0.0.1:32912: OK
+2026-10-15 21:33:12,004 WARNING Connection with 127.0.0.1:32912 was reset
+2026-10-15 21:33:12,005 INFO Client disconnected: 127.0.0.1:32912
+2026-10-15 21:33:12,005 INFO Server stopped

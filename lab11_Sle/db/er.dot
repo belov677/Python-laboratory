@@ -1,0 +1,13 @@
+digraph ER {
+  rankdir=LR; node [shape=plaintext, fontname="DejaVu Sans", fontsize=10]; edge [fontname="DejaVu Sans", fontsize=9];
+  categories [label=<<table border="0" cellborder="1" cellspacing="0"><tr><td bgcolor="#dde7f7"><b>categories</b></td></tr><tr><td align="left">PK id</td></tr><tr><td align="left">name UNIQUE</td></tr></table>>];
+  items [label=<<table border="0" cellborder="1" cellspacing="0"><tr><td bgcolor="#dde7f7"><b>items</b></td></tr><tr><td align="left">PK id</td></tr><tr><td align="left">sku UNIQUE</td></tr><tr><td align="left">name</td></tr><tr><td align="left">FK category_id</td></tr><tr><td align="left">quantity CHECK ≥ 0</td></tr><tr><td align="left">min_stock CHECK ≥ 0</td></tr><tr><td align="left">price CHECK &gt; 0</td></tr><tr><td align="left">location</td></tr><tr><td align="left">image_url (CDN)</td></tr></table>>];
+  suppliers [label=<<table border="0" cellborder="1" cellspacing="0"><tr><td bgcolor="#dde7f7"><b>suppliers</b></td></tr><tr><td align="left">PK id</td></tr><tr><td align="left">name UNIQUE</td></tr><tr><td align="left">phone</td></tr><tr><td align="left">city</td></tr></table>>];
+  item_suppliers [label=<<table border="0" cellborder="1" cellspacing="0"><tr><td bgcolor="#f7ecd5"><b>item_suppliers</b></td></tr><tr><td align="left">PK,FK item_id</td></tr><tr><td align="left">PK,FK supplier_id</td></tr><tr><td align="left">purchase_price</td></tr></table>>];
+  stock_movements [label=<<table border="0" cellborder="1" cellspacing="0"><tr><td bgcolor="#dde7f7"><b>stock_movements</b></td></tr><tr><td align="left">PK id</td></tr><tr><td align="left">FK item_id</td></tr><tr><td align="left">FK supplier_id NULL</td></tr><tr><td align="left">movement_type in/out</td></tr><tr><td align="left">quantity CHECK &gt; 0</td></tr><tr><td align="left">created_at</td></tr></table>>];
+  categories -> items [label="1 : N"];
+  items -> item_suppliers [label="1 : N"];
+  suppliers -> item_suppliers [label="1 : N"];
+  items -> stock_movements [label="1 : N"];
+  suppliers -> stock_movements [label="1 : N", style=dashed];
+}

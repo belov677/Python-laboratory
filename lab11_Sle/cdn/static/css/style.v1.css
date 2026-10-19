@@ -1,0 +1,4 @@
+/* версия 1 стилей каталога */
+body { font-family: sans-serif; background: #f4f6fa; color: #222; }
+.item { border: 1px solid #ccc; padding: 8px; margin: 6px; }
+.below-min { color: #b00020; font-weight: bold; }

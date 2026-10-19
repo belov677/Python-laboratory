@@ -1,0 +1,104 @@
+openapi: 3.0.3
+info:
+  title: Warehouse Items API (лабораторная №10, вариант 17)
+  version: "1.0"
+servers:
+  - url: http://127.0.0.1:5000
+components:
+  securitySchemes:
+    ApiKey: {type: apiKey, in: header, name: X-API-Key}
+  schemas:
+    ItemInput:
+      type: object
+      required: [sku, name, category, quantity, min_stock, price, location]
+      properties:
+        sku: {type: string, example: NB-001}
+        name: {type: string, example: Ноутбук Lenovo}
+        category: {type: string, example: электроника}
+        quantity: {type: integer, minimum: 0, example: 12}
+        min_stock: {type: integer, minimum: 0, example: 5}
+        price: {type: number, exclusiveMinimum: true, minimum: 0, example: 54990}
+        location: {type: string, example: A-01}
+    Item:
+      allOf:
+        - $ref: '#/components/schemas/ItemInput'
+        - type: object
+          properties:
+            id: {type: integer}
+            below_min: {type: boolean}
+    Error:
+      type: object
+      properties:
+        error: {type: string, example: Item with id 15 not found}
+        code: {type: string, example: ITEM_NOT_FOUND}
+  responses:
+    NotFound: {description: Товар не найден, content: {application/json: {schema: {$ref: '#/components/schemas/Error'}}}}
+    BadRequest: {description: Некорректные данные, content: {application/json: {schema: {$ref: '#/components/schemas/Error'}}}}
+    Unauthorized: {description: Нет или неверный X-API-Key, content: {application/json: {schema: {$ref: '#/components/schemas/Error'}}}}
+paths:
+  /items:
+    get:
+      summary: Список товаров с фильтрацией, сортировкой и пагинацией
+      parameters:
+        - {name: category, in: query, schema: {type: string}}
+        - {name: location, in: query, schema: {type: string}}
+        - {name: min_quantity, in: query, schema: {type: integer}}
+        - {name: max_quantity, in: query, schema: {type: integer}}
+        - {name: search, in: query, schema: {type: string}}
+        - {name: sort, in: query, schema: {type: string, enum: [id, name, quantity, price, category]}}
+        - {name: order, in: query, schema: {type: string, enum: [asc, desc]}}
+        - {name: page, in: query, schema: {type: integer, minimum: 1}}
+        - {name: limit, in: query, schema: {type: integer, minimum: 1}}
+      responses:
+        "200": {description: Список товаров, content: {application/json: {schema: {type: array, items: {$ref: '#/components/schemas/Item'}}}}}
+        "400": {$ref: '#/components/responses/BadRequest'}
+    post:
+      summary: Создание товара
+      security: [{ApiKey: []}]
+      requestBody: {required: true, content: {application/json: {schema: {$ref: '#/components/schemas/ItemInput'}}}}
+      responses:
+        "201": {description: Создан, content: {application/json: {schema: {$ref: '#/components/schemas/Item'}}}}
+        "400": {$ref: '#/components/responses/BadRequest'}
+        "401": {$ref: '#/components/responses/Unauthorized'}
+        "409": {description: Артикул уже существует}
+  /items/low-stock:
+    get:
+      summary: Товары ниже минимального остатка
+      responses:
+        "200": {description: Список, content: {application/json: {schema: {type: array, items: {$ref: '#/components/schemas/Item'}}}}}
+  /items/statistics:
+    get:
+      summary: Статистика склада
+      responses:
+        "200": {description: Показатели}
+  /items/{id}:
+    parameters:
+      - {name: id, in: path, required: true, schema: {type: integer}}
+    get:
+      summary: Получение товара (поддерживает ETag / If-None-Match)
+      responses:
+        "200": {description: Товар, content: {application/json: {schema: {$ref: '#/components/schemas/Item'}}}}
+        "304": {description: Не изменился}
+        "404": {$ref: '#/components/responses/NotFound'}
+    put:
+      summary: Полное изменение
+      security: [{ApiKey: []}]
+      requestBody: {required: true, content: {application/json: {schema: {$ref: '#/components/schemas/ItemInput'}}}}
+      responses:
+        "200": {description: Изменён}
+        "400": {$ref: '#/components/responses/BadRequest'}
+        "404": {$ref: '#/components/responses/NotFound'}
+    patch:
+      summary: Частичное изменение
+      security: [{ApiKey: []}]
+      requestBody: {required: true, content: {application/json: {schema: {type: object}}}}
+      responses:
+        "200": {description: Изменён}
+        "400": {$ref: '#/components/responses/BadRequest'}
+        "404": {$ref: '#/components/responses/NotFound'}
+    delete:
+      summary: Удаление
+      security: [{ApiKey: []}]
+      responses:
+        "204": {description: Удалён}
+        "404": {$ref: '#/components/responses/NotFound'}

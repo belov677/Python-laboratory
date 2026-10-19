@@ -1,0 +1,26 @@
+$ docker compose build
+ Image lab11_sle-api Built
+$ docker compose up -d --wait
+ Container lab11_sle-redis-1 Started 
+ Container lab11_sle-postgres-1 Started 
+ Container lab11_sle-postgres-1 Healthy 
+ Container lab11_sle-api-1 Started 
+ Container lab11_sle-redis-1 Healthy 
+ Container lab11_sle-postgres-1 Healthy 
+ Container lab11_sle-api-1 Healthy
+$ docker compose ps
+SERVICE    IMAGE           STATUS                    PORTS
+api        lab11_sle-api   Up 6 seconds              0.0.0.0:5000->5000/tcp
+postgres   postgres:16     Up 12 seconds (healthy)   5432/tcp
+redis      redis:7         Up 12 seconds             6379/tcp
+$ curl -s localhost:5000/items/statistics -H 'X-API-Key: secret-key'
+{"items":12,"units":203,"stock_value":953715.0,"below_min":4,"categories":4,"suppliers":5,"popular":[]}
+$ curl -s 'localhost:5000/items?limit=2&sort=quantity' -H 'X-API-Key: secret-key' | head -c 300; echo
+[{"id":9,"sku":"TB-120","name":"Стол письменный 120 см","category":"мебель","quantity":0,"min_stock":1,"price":12500.0,"location":"C-02","image_url":null,"below_min":true},{"id":2,"sku":"MS-010","name":"Мышь Logitech","category":"электроника","quantity":3,"min_st
+$ docker compose exec -T postgres psql -U lab -d warehouse -c 'SELECT count(*) AS items FROM items'
+ items 
+-------
+    12
+(1 row)
+$ docker compose down -v
+ Network lab11_sle_default Removed 
